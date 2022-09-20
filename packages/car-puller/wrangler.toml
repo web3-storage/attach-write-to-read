@@ -1,0 +1,44 @@
+# attach-puller wrangler config.
+name = "attach-puller"
+main = "./dist/worker.js"
+compatibility_date = "2022-09-20"
+compatibility_flags = [ "url_standard", "durable_object_alarms" ]
+no_bundle = true
+
+[build]
+command = "npm run build"
+
+# miniflare
+[vars]
+DEBUG = "true"
+ENV = "dev"
+
+# PROD!
+[env.production]
+# name = "attach-puller-production"
+account_id = "fffa4b4363a7e5250af8357087263b3a" # Protocol Labs CF account
+route = { pattern = "https://attach-puller.web3.storage/*", zone_id = "7eee3323c1b35b6650568604c65f441e" }
+vars = { ENV = "production", CARPARK_URL = "https://pub-2af65b5c5b58430facc89f3dd582355d.r2.dev" }
+
+[[env.production.r2_buckets]]
+# what's it called in r2?
+bucket_name = "car-park-attach-prod-0"
+# what's it called as a property of the env object
+binding = "CARPARK"
+
+# STAGING!
+[env.staging]
+# name = "attach-puller-staging"
+account_id = "fffa4b4363a7e5250af8357087263b3a" # Protocol Labs CF account
+route = { pattern = "https://attach-puller-staging.web3.storage/*", zone_id = "7eee3323c1b35b6650568604c65f441e" }
+vars = { ENV = "staging", CARPARK_URL = "https://pub-1adc16481af04962b6319b976cdb45f7.r2.dev" }
+
+[[env.staging.r2_buckets]]
+# what's it called in r2?
+bucket_name = "car-park-attach-staging-0"
+# what's it called as a property of the env object
+binding = "CARPARK"
+
+# TEST!
+[env.test]
+vars = { ENV = "test", CARPARK_URL = "https://localhost:9000" }

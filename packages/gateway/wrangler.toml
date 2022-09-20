@@ -1,0 +1,45 @@
+# attach-gateway wrangler config.
+name = "attach-gateway"
+main = "./dist/worker.js"
+compatibility_date = "2022-09-20"
+compatibility_flags = [ "url_standard", "durable_object_alarms" ]
+no_bundle = true
+
+[build]
+command = "npm run build"
+
+# miniflare
+[vars]
+DEBUG = "true"
+ENV = "dev"
+
+# PROD!
+[env.production]
+# name = "attach-gateway-production"
+account_id = "fffa4b4363a7e5250af8357087263b3a" # Protocol Labs CF account
+route = { pattern = "https://attach-gateway.web3.storage/*", zone_id = "7eee3323c1b35b6650568604c65f441e" }
+vars = { ENV = "production", CAR_PULLER_URL = "https://attach-puller.web3.storage" }
+durable_objects.bindings = [
+  { name = "ATTACH_PIPELINE_QUEUE", class_name = "AttachPipelineQueue0" }
+]
+
+# STAGING!
+[env.staging]
+# name = "attach-gateway-staging"
+account_id = "fffa4b4363a7e5250af8357087263b3a" # Protocol Labs CF account
+route = { pattern = "https://attach-gateway-staging.web3.storage/*", zone_id = "7eee3323c1b35b6650568604c65f441e" }
+vars = { ENV = "staging", CAR_PULLER_URL = "https://attach-puller-staging.web3.storage/" }
+durable_objects.bindings = [
+  { name = "ATTACH_PIPELINE_QUEUE", class_name = "AttachPipelineQueue0" }
+]
+
+# TEST!
+[env.test]
+vars = { ENV = "test", CAR_PULLER_URL = "https://attach-puller.web3.storage" }
+durable_objects.bindings = [
+  { name = "ATTACH_PIPELINE_QUEUE", class_name = "AttachPipelineQueue0" }
+]
+
+[[migrations]]
+tag = "v1" # Should be unique for each entry
+new_classes = ["AttachPipelineQueue0"]
